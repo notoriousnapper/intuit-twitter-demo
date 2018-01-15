@@ -1,0 +1,32 @@
+.profile {
+  background-color: #F5F8FA;
+  border: 1px black solid;
+  width: 30%;
+  padding: 10px 20px;
+  min-height: 50px;
+}
+
+.profile span {
+  margin-right: 10px;
+  font-weight: lighter;
+}
+
+.top-line span {
+  font-weight: lighter;
+}
+
+.profile-picture {
+  border-radius: 50%;
+/*   width: 200px;
+  height: 200px;
+ */  float: top;
+  text-align: center;
+  margin-right: 10px;
+}
+
+.title {
+  font-weight: bold !important;
+}
+.twitter-line {
+  font-weight: lighter;
+}
