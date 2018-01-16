@@ -36,13 +36,12 @@ public class UserDbUtil {
 			myStmt = myConn.prepareStatement(sql);
 			myStmt.setString(1, userId);
 			
-			System.out.println("The sql line is: " + sql + userId);
 
 			// execute query
 			myRs = myStmt.executeQuery();
 			// process result set
 			if (myRs.next()) {
-				// retrive data from result set row
+				// retrieve data from result set row
 				int id = myRs.getInt("id");
 				String userName = myRs.getString("userName");
 				String password = myRs.getString("password");
@@ -159,7 +158,6 @@ public class UserDbUtil {
 			// get db connection
 			myConn = dataSource.getConnection();
 			String sql = "Select 1 from followee where userId = ? and followeeId = ? ";  
-
 			PreparedStatement ps = myConn.prepareStatement(sql);
 			ps.setString(1, followerId);
 			ps.setString(2, followeeId);
@@ -186,8 +184,10 @@ public class UserDbUtil {
 		// Steps 2: Update followee's follower list
 		// Steps 3: [EXTRA] Update followee's stats +1, follower +1 followed[
 
-	/* Following a Celebrity: table of who you follow */
-	public void followUser(String userId, String followeeId) throws Exception {
+	
+	
+	/* Following a Celebrity: Table of who you follow, you being a follower [Primary Key] */
+	public void followUser(String followingId, String followerId) throws Exception {
 
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
@@ -202,8 +202,8 @@ public class UserDbUtil {
 			myStmt = myConn.prepareStatement(sql);
 
 			// set the param values for student
-			myStmt.setString(1, userId);
-			myStmt.setString(2, followeeId);
+			myStmt.setString(1, followerId);
+			myStmt.setString(2, followingId);
 
 			// execute query
 			myStmt.execute();
@@ -221,13 +221,14 @@ public class UserDbUtil {
 	}
 	
 	
-	// A Celebrity's [Followee] # of followers grows
-	public void addFollower(String userId, String followerId) throws Exception {
+	// A Celebrity's [Following] # of followers grows
+	public void addFollower(String followingId, String followerId) throws Exception {
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
 		try {
 			// get db connection
+			System.out.println("Adding Follower Table");
 			myConn = dataSource.getConnection();
 			// create a sql statement
 			String sql = "insert into follower "
@@ -236,7 +237,7 @@ public class UserDbUtil {
 			myStmt = myConn.prepareStatement(sql);
 
 			// set the param values for student
-			myStmt.setString(1, userId);
+			myStmt.setString(1, followingId);
 			myStmt.setString(2, followerId);
 
 			// execute query
@@ -244,11 +245,12 @@ public class UserDbUtil {
 			
 			// Add user/follower set to Redis for fast access
 			Jedis jedis = new Jedis("localhost");
-			jedis.sadd(userId, followerId);
+			jedis.sadd(followingId, followerId);
 			jedis.close();
+			
+			System.out.println("Closed Jedis Instance Successfully");
 
 
-			// process result set
 		} finally {
 			close(myConn, myStmt, null);
 		}

@@ -1,5 +1,5 @@
-<%@ page import="java.util.*, com.twitter.web.jdbc.*" %>
-<%@ page import="java.util.*, com.twitter.tweetsMVC.*" %>
+<%@ page import="java.util.*, com.twitter.web.*" %>
+<%@ page import="java.util.*, com.twitter.model.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
@@ -8,7 +8,6 @@
 </head>
 <body>
 
-Get List of Users (Hidden API)
 <%
 	// get students from the request object 
 	List<User> theUsers = 

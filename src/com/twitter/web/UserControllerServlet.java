@@ -113,6 +113,7 @@ public class UserControllerServlet extends HttpServlet {
 			return;
 	}
 
+
 	private void listSingleUser(HttpServletRequest request,
 			HttpServletResponse response)
 		throws Exception{
@@ -129,16 +130,15 @@ public class UserControllerServlet extends HttpServlet {
 		out.print("<html><body>" + user + "</body></html>");
 	}
 
-	private void checkFollower(HttpServletRequest request,
+	private boolean checkFollower(HttpServletRequest request,
 			HttpServletResponse response)
 		throws Exception{
-		// TODO Auto-generated method stub
 
 		String followerId = request.getParameter("follower");
 		String followeeId = request.getParameter("followee");
-		userDbUtil.checkFollower(followerId, followeeId);
-		listUsers(request, response);	
-
+		boolean isFollower = userDbUtil.checkFollower(followerId, followeeId);
+		
+		return isFollower;
 		
 	}
 
@@ -162,12 +162,14 @@ public class UserControllerServlet extends HttpServlet {
 			HttpServletResponse response) throws Exception {
 
 		String followerId = request.getParameter("follower");
-		String followeeId = request.getParameter("followee");
+		String followingId = request.getParameter("followee");
 		
-		userDbUtil.addFollower(followeeId, followerId); // follower 2nd field
-		userDbUtil.followUser(followerId, followeeId);
-		
-		listUsers(request, response);
+		if (!checkFollower(request, response)){
+			userDbUtil.addFollower(followingId, followerId); // follower 2nd field
+			userDbUtil.followUser(followingId, followerId);
+		}
+
+		return;
 	}
 
 	private void removeFollowers(HttpServletRequest request,
@@ -177,12 +179,10 @@ public class UserControllerServlet extends HttpServlet {
 		String followeeId = request.getParameter("followee");
 		userDbUtil.removeFollower(followerId, followeeId);
 		
-		listUsers(request, response);
 	}
 
 	@Override
 	public void init() throws ServletException {
-		// TODO Auto-generated method stub
 		super.init();
 		// create our student db util, and pass in conn pool / datasource
 		
