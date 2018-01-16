@@ -61,6 +61,7 @@ II. Future Improvements:
 - Improve Home Feed Algorithm
 	i. Have SQL Back-up of home feed
 	ii. Store Tweets in Redis Cache as JSON, including all necessary metadata
+	iii. Add Case to delete all tweets related to an unfollowed user when an Unfollow action occurs
 
 III.
 - Other steps:
