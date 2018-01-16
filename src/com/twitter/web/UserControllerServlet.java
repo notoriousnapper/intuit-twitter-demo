@@ -90,7 +90,6 @@ public class UserControllerServlet extends HttpServlet {
 			
 			if (username != null) {
 				User user = userDbUtil.getSingleUserByUserName(username);
-
 				if (user != null && (user.getPassword().equals(password))) { // User Exists and Found
 						HttpSession session = request.getSession();
 						session.setAttribute("userId", Integer.toString(user.getId()));
@@ -163,12 +162,24 @@ public class UserControllerServlet extends HttpServlet {
 
 		String followerId = request.getParameter("follower");
 		String followingId = request.getParameter("followee");
+		System.out.println("Followers and followee" + followerId + " " +  followingId);
 		
 		if (!checkFollower(request, response)){
 			userDbUtil.addFollower(followingId, followerId); // follower 2nd field
 			userDbUtil.followUser(followingId, followerId);
 		}
-
+		
+		String PageUserName = (String) request.getParameter("pageUserName");
+		System.err.println("Page USERNAME IS " + PageUserName);
+		if (PageUserName != null) {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/timeline/" + PageUserName);
+			dispatcher.forward(request, response);
+		}
+		else {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/feed.jsp");
+			dispatcher.forward(request, response);
+		}
+		
 		return;
 	}
 
@@ -180,9 +191,17 @@ public class UserControllerServlet extends HttpServlet {
 		userDbUtil.removeFollower(followingId, followerId);
 		userDbUtil.removeFollowing(followingId, followerId);
 		System.out.println("Called Both Remove Functions");
-		
-		
-		
+
+		String PageUserName = (String) request.getParameter("pageUserName");
+		System.err.println("Page USERNAME IS " + PageUserName);
+		if (PageUserName != null) {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/timeline/" + PageUserName);
+			dispatcher.forward(request, response);
+		}
+		else {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/feed.jsp");
+			dispatcher.forward(request, response);
+		}
 	}
 
 	@Override

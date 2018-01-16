@@ -2,6 +2,7 @@ package com.twitter.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import com.twitter.model.Tweet;
@@ -74,15 +76,26 @@ public class TweetControllerServlet extends HttpServlet {
 		String message = request.getParameter("message");
 		String imageUrl = request.getParameter("imageUrl");
 		tweetDbUtil.createTweet(userId, message, imageUrl);
-
+		
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+		dispatcher.forward(request, response);
 	}
-	private List<Tweet> listHomeTweets(HttpServletRequest request,
+	private void listHomeTweets(HttpServletRequest request,
 			HttpServletResponse response)
 		throws Exception{
 		
-		List<Tweet> tweets = null;
+		List<Tweet> tweets = new ArrayList<Tweet>();
 		int userId = Integer.parseInt(request.getParameter("userId"));
-		tweets = tweetDbUtil.getHomeFeed(userId);
+		System.out.println("About To Add HomeFeed");
+		try {
+			HttpSession session = request.getSession();
+				tweets = tweetDbUtil.getHomeFeed(userId);
+				System.out.println(userId + "Is user and Timeline Tweets!" + tweets);
+				request.setAttribute("Feed", tweets);
+		}
+		catch (Exception e) {
+			throw new ServletException(e);
+		}
 
 		PrintWriter out = response.getWriter();
 		response.setContentType("text/plain");
@@ -90,12 +103,15 @@ public class TweetControllerServlet extends HttpServlet {
 		for (Tweet tweet: tweets) {
 			out.print(tweet.getUserId());
 			out.print(tweet.getMessage());
-			out.print(tweet.getTimeStamp());
+//			out.print(tweet.getTimeStamp()); // will be incorrect
 			out.print("\n\n");
 		}
-		out.print("</body></html>");
 
-		return tweets;
+		out.print("</body></html>");
+				
+		return;
+					
+//		return tweets;
 	}
 
 	private void listTimeLineTweets(HttpServletRequest request,

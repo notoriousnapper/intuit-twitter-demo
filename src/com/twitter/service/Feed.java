@@ -22,7 +22,7 @@ import com.twitter.util.TweetDbUtil;
 /**
  * Servlet implementation class Feed
  */
-@WebServlet("/feed/*")
+@WebServlet("/api/feed/*")
 public class Feed extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	

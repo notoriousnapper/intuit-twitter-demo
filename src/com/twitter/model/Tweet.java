@@ -5,6 +5,16 @@ public class Tweet {
 	
 	private int id;
 	private int userId;
+	private String userName;
+	private String userHandle;
+	public String getUserHandle() {
+		return userHandle;
+	}
+
+	public void setUserHandle(String userHandle) {
+		this.userHandle = userHandle;
+	}
+
 	private String message;
 	private int likes;
 	private String imageUrl;
@@ -15,10 +25,19 @@ public class Tweet {
 		super();
 		this.id = id;
 		this.userId = userId;
+		this.userName = "FillerUserName";
 		this.message = message;
 		this.imageUrl = imageUrl;
 		this.likes = 0;
 		this.timeStamp = timeStamp;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public int getId() {

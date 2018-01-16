@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="com.twitter.tweetsMVC.*" %>
+<%@ page import="com.twitter.model.*" %>
 
 <html>
-  <form action="UserControllerServlet" method="GET">
-	<input type="hidden" name="command" value="AUTHENTICATE" />
+  <form action="FeedControllerServlet" method="GET">
+	<input type="hidden" name="command" value="AUTH" />
 	<label> Type in your username: </label>
 	<input type="text" name="username"/>
 	<label> Type in  password: </label>

@@ -9,6 +9,14 @@ public class User {
 	private String imageUrl;
 	private String userHandle;
 	
+	public String getUserHandle() {
+		return userHandle;
+	}
+
+	public void setUserHandle(String userHandle) {
+		this.userHandle = userHandle;
+	}
+
 	public User(int id, String userName, String password, String email,
 			String imageUrl, String handle) {
 		super();

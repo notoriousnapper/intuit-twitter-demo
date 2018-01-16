@@ -4,17 +4,14 @@
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="java.util.*" %>
 <% 
-    // This Page is Timeline Page 
-	List<Tweet> tweets = (List<Tweet>) request.getAttribute("Timeline");
+
+	List<Tweet> tweets = (List<Tweet>) request.getAttribute("Feed");
+	if (tweets != null){
+		Collections.reverse(tweets);
+	}
+	System.out.println("Getting HOME FEED" + tweets);
 	
     // Let this be the wall Page
-	String pageUserId = (String) session.getAttribute("PageUserId");
-	String pageUserName = (String) session.getAttribute("PageUserName");
-	String pageUserHandle  = (String) session.getAttribute("PageUserHandle");
-	String pageUserPageId = (String) session.getAttribute("PageUserPageId");
-	String pageUserImageUrl = (String) session.getAttribute("PageUserImageUrl");
-	
-
 	String userId = (String) session.getAttribute("userId");
 	String userName = (String) session.getAttribute("userName");
 	String userHandle  = (String) session.getAttribute("userHandle");
@@ -27,34 +24,14 @@
     }
 
     User user = new User(Integer.parseInt(userId), userName, "", "", imageUrl, userHandle);
-    User pageUser = new User(Integer.parseInt(pageUserId),pageUserName, "", "", pageUserImageUrl,  pageUserHandle);
+    User pageUser = new User(2, "Daniel Radcliffe", "wtv", "", "",  "Harry Potter");
 
 	session.setAttribute("profileUrl", "http://lorempixel.com/200/200/sports/");
 	request.setAttribute("user", user);
 	request.setAttribute("pageUser", pageUser);
-
-	boolean isFollowing = false;
-	if (request.getAttribute("isFollowing") != null){
-		isFollowing = (boolean) request.getAttribute("isFollowing");
-	}
-
-
 %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
-
-<t:profile user="${user}" isFollowing="${isFollowing}" pageUser="${pageUser}">
-</t:profile>
-
-<t:create-tweet userId="${userId}"></t:create-tweet>
-
-<% 
-	Timestamp tstamp = new Timestamp(System.currentTimeMillis());
-	Tweet tweet = new Tweet(1, 1, "Happy 2018", "", tstamp );
-	tweet.setUserName("Brad D. Smith");
-	tweet.setUserHandle("Things");
-	request.setAttribute("tweet", tweet);
-    %>
 
 
 
@@ -70,14 +47,7 @@
   <body>
   
 
-  <form action="${pageContext.request.contextPath}/FeedControllerServlet" method="GET">
-	<label> GO TO HOME FEED OF TWEETS</label>
-	<input type="hidden" name="command" value="HOME" />
-	<input type="text" name="userId" value="<%=userId%>"/>
-	<input type="submit" value="Get Tweets"/>
-</form>
   <br/>
-
   <% if (tweets != null) {
 	  for (Tweet t: tweets) {
  		  SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");

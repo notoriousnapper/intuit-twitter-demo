@@ -75,17 +75,21 @@ public class UserDbUtil {
 		try {
 			// get a connection and create sql
 			myConn = dataSource.getConnection();
-			String sql = "select * from user where userName = ? ";
+			String sql = "select * from user where userName=?";
 			myStmt = myConn.prepareStatement(sql);
 			myStmt.setString(1, userName);
+			
+			System.out.println("Username" + userName);
 			
 
 			// execute query
 			myRs = myStmt.executeQuery();
 			// process result set
 			if (myRs.next()) {
-				// retrive data from result set row
+				// retrieve data from result set row
+				System.out.println("Username 1.5 ");
 				int id = myRs.getInt("id");
+				System.out.println("Username 2 and id " + id);
 				String password = myRs.getString("password");
 				String email = myRs.getString("email");
 				String imageUrl = myRs.getString("imageUrl");
