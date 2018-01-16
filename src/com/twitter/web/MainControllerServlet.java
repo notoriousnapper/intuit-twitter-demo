@@ -63,11 +63,11 @@ public class MainControllerServlet extends HttpServlet {
 				HttpSession session = request.getSession();
 				if(user != null){
 						
-					session.setAttribute("PageUserId", Integer.toString(user.getId()));
-					session.setAttribute("PageUserName", user.getUserName());
-					session.setAttribute("PageUserHandle", user.getHandle());
-					session.setAttribute("PageUserImageUrl", user.getImageUrl());
-					session.setAttribute("PageUserPageId", Integer.toString(user.getId()));
+					session.setAttribute("pageUserId", Integer.toString(user.getId()));
+					session.setAttribute("pageUserName", user.getUserName());
+					session.setAttribute("pageUserHandle", user.getHandle());
+					session.setAttribute("pageUserImageUrl", user.getImageUrl());
+					session.setAttribute("pageUserPageId", Integer.toString(user.getId()));
 					System.out.println("Grabbed User: " + user.getUserName());
 					
 					List<Tweet> tweets = tweetDbUtil.getTweets(user.getId());

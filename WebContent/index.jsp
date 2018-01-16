@@ -13,6 +13,10 @@
 	String pageUserHandle  = (String) session.getAttribute("PageUserHandle");
 	String pageUserPageId = (String) session.getAttribute("PageUserPageId");
 	String pageUserImageUrl = (String) session.getAttribute("PageUserImageUrl");
+
+	if ((pageUserImageUrl.equals(""))){
+		pageUserImageUrl = "http://allthingsd.com/files/2012/06/brad_smith_intuit.png";
+	}
 	
 
 	String userId = (String) session.getAttribute("userId");
@@ -43,51 +47,45 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<t:profile user="${user}" isFollowing="${isFollowing}" pageUser="${pageUser}">
-</t:profile>
-
-<t:create-tweet userId="${userId}"></t:create-tweet>
-
-<% 
-	Timestamp tstamp = new Timestamp(System.currentTimeMillis());
-	Tweet tweet = new Tweet(1, 1, "Happy 2018", "", tstamp );
-	tweet.setUserName("Brad D. Smith");
-	tweet.setUserHandle("Things");
-	request.setAttribute("tweet", tweet);
-    %>
-
-
-
-
 <html>
   <head>
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="<c:url value="/css/index.css" />"/>
   </head>
-  UserName: <%=userName %>
-  UserHandle: <%=userHandle %>
   <body>
-  
+	<t:banner user="${user}" isFollowing="${isFollowing}" pageUser="${pageUser}"></t:banner>
 
-  <form action="${pageContext.request.contextPath}/FeedControllerServlet" method="GET">
-	<label> GO TO HOME FEED OF TWEETS</label>
-	<input type="hidden" name="command" value="HOME" />
-	<input type="text" name="userId" value="<%=userId%>"/>
-	<input type="submit" value="Get Tweets"/>
-</form>
-  <br/>
 
-  <% if (tweets != null) {
-	  for (Tweet t: tweets) {
- 		  SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		  String string  = dateFormat.format(t.getTimeStamp());
-		  System.out.println("Found a tweet: " + string);
- 	  %>
-	<t:tweet data="<%=t%>" ></t:tweet>
-<% }
 
-  }%>
+	<t:left-column>
+	<t:profile user="${user}" pageUser="${pageUser}">
+	</t:profile>
+	</t:left-column>
+
+
+	<div class="mid-column">
+		<t:create-tweet userId="${userId}"></t:create-tweet> <!--  Entry Form for Tweets -->
+		<% if (tweets != null) {
+			  for (Tweet t: tweets) {
+				   SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				  String string  = dateFormat.format(t.getTimeStamp());
+				  System.out.println("Found a tweet: " + string);
+			   %>
+			<t:tweet data="<%=t%>" userName="<%=pageUserName%>" userHandle="<%=pageUserHandle%>"
+			  imageUrl="<%= pageUserImageUrl%>" ></t:tweet>
+		<% } }%>
+	</div>
+	
+	
+	  <form action="${pageContext.request.contextPath}/FeedControllerServlet" method="GET">
+		<label> GO TO HOME FEED OF TWEETS</label>
+		<input type="hidden" name="command" value="HOME" />
+		<input type="text" name="userId" value="<%=userId%>"/>
+		<input type="submit" value="Get Tweets"/>
+	</form>
+	  <br/>
+
   </body>
 </html>
 
