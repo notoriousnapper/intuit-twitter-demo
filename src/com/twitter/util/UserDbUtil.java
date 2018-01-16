@@ -1,4 +1,4 @@
-package com.twitter.tweetsMVC;
+package com.twitter.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
+
+import com.twitter.model.User;
 
 import redis.clients.jedis.Jedis;
 
@@ -78,7 +80,6 @@ public class UserDbUtil {
 			myStmt = myConn.prepareStatement(sql);
 			myStmt.setString(1, userName);
 			
-			System.out.println("The sql line is: " + sql + userName);
 
 			// execute query
 			myRs = myStmt.executeQuery();
@@ -93,11 +94,10 @@ public class UserDbUtil {
 
 				tempUser = new User(id, userName, password, email,
 						imageUrl, userHandle);
-				System.out.println(tempUser.toString());
 
 			}
 			else {
-				System.out.println("Where is the User?");
+				System.err.println("ERROR Getting user, does not exist.");
 			}
 		} finally {
 			close(myConn, myStmt, myRs);
@@ -120,7 +120,6 @@ public class UserDbUtil {
 			myConn = dataSource.getConnection();
 			// create a sql statement
 			String sql = "select * from user";
-//					+ "order by last_name";
 			myStmt = myConn.createStatement();
 
 			// execute query
@@ -129,9 +128,8 @@ public class UserDbUtil {
 			// process result set
 			while (myRs.next()) {
 
-				// retrive data from result set row
+				// retrieve data from result set row
 				int id = myRs.getInt("id");
-//				String userName = "tempusername";
 				String userName = myRs.getString("userName");
 				String password = myRs.getString("password");
 				String email = myRs.getString("email");
@@ -155,7 +153,7 @@ public class UserDbUtil {
 	public boolean checkFollower(String followerId, String followeeId) throws Exception {
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
-		boolean isFollow = false;
+		boolean isFollower = false;
 
 		try {
 			// get db connection
@@ -167,16 +165,14 @@ public class UserDbUtil {
 			ps.setString(2, followeeId);
 			ResultSet rs = ps.executeQuery();
 
-			if (rs.next() != false){
-				System.out.println("Is it null?" +  rs);
-				isFollow = true;
+			if (rs.next()){
+				isFollower = true; 
 			}
 
 		} finally {
 			close(myConn, myStmt, null);
 		}
-		System.out.println("Is user a follower?: " + isFollow);
-		return isFollow;
+		return isFollower;
 	}
 
 	public void removeFollower(String followerId, String followeeId) throws Exception {
@@ -246,8 +242,7 @@ public class UserDbUtil {
 			// execute query
 			myStmt.execute();
 			
-			
-			// If not probem, Add to Redis for cache
+			// Add user/follower set to Redis for fast access
 			Jedis jedis = new Jedis("localhost");
 			jedis.sadd(userId, followerId);
 			jedis.close();

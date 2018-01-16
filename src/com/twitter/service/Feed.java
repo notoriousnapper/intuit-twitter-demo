@@ -1,4 +1,4 @@
-package com.twitter.services;
+package com.twitter.service;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import com.google.gson.Gson;
-import com.twitter.tweetsMVC.Tweet;
-import com.twitter.tweetsMVC.TweetDbUtil;
+import com.twitter.model.Tweet;
+import com.twitter.util.TweetDbUtil;
 
 /**
  * Servlet implementation class Feed
@@ -27,16 +27,13 @@ public class Feed extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Resource(name="jdbc/web_student_tracker")
-	private DataSource dataSource;
-
-	private TweetDbUtil tweetDbUtil;
-
-	private Gson _gson = null;
-	private HashMap<String, Tweet> tweetModel = new HashMap<>();
+	static DataSource dataSource;
+	static TweetDbUtil tweetDbUtil;
+	static Gson gson = null;
 	
 	public Feed() {
         super();
-        _gson = new Gson();
+        gson = new Gson();
     }
        
 
@@ -45,8 +42,8 @@ public class Feed extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		String pathInfo = request.getPathInfo();
 
 		if(pathInfo == null || pathInfo.equals("/")){
@@ -61,42 +58,23 @@ public class Feed extends HttpServlet {
 			return;
 		}
 
-		int userId = Integer.parseInt(token[1]);
-		System.out.println(userId + "is userId");
-		
-//		if(!tweetModel.containsKey(userId)) {
-//			
-//			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-//			return;
-//		}
-		
 		
 		// Try And Get Home Feed from Redis
 		try {
-			System.out.println("In Try Catch Loop");
+			int userId = Integer.parseInt(token[1]);
 			Collection<Tweet> models = listHomeTweets(userId);
-			System.out.println("Finished Receiving Home Tweets: " + models);
 			sendAsJson(response, models);
 		}
 		catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 		
-//		sendAsJson(response, tweetModel.get(modelId));
 		return;
 		
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-	
 	@Override
 	public void init() throws ServletException {
-		// TODO Auto-generated method stub
 		super.init();
 		// create our student db util, and pass in conn pool / datasource
 		
@@ -135,7 +113,7 @@ public class Feed extends HttpServlet {
     		
     		response.setContentType("application/json");
     		
-    		String res = _gson.toJson(obj);
+    		String res = gson.toJson(obj);
     		PrintWriter out = response.getWriter();
     		out.print(res);
     		out.flush();

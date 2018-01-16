@@ -1,4 +1,4 @@
-package com.twitter.web.jdbc;
+package com.twitter.web;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import com.twitter.tweetsMVC.User;
-import com.twitter.tweetsMVC.UserDbUtil;
+import com.twitter.model.User;
+import com.twitter.util.UserDbUtil;
 
 /**
  * Servlet implementation class FollowerServlet
@@ -56,6 +56,7 @@ public class FollowerServlet extends HttpServlet {
 					
 				case "ADD":
 					addFollowers(request, response);
+					break;
 
 				default: 
 					listUsers(request, response);

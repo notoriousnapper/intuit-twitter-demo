@@ -1,4 +1,4 @@
-package com.twitter.web.jdbc;
+package com.twitter.web;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

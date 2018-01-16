@@ -1,4 +1,4 @@
-package com.twitter.tweetsMVC;
+package com.twitter.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,10 +7,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
+
+import com.twitter.model.Tweet;
 
 import redis.clients.jedis.Jedis;
 
@@ -53,18 +57,16 @@ public class TweetDbUtil {
 			returnedKey = keys.getInt(1);
 			keys.close();
 
-			// open Redis connection
-			// cycle through userId's followers, and add tweetId 
-			// to Redis lists
-			System.out.println("What is the retuned key for tweet?: " + returnedKey);
+			// Open Redis connection, 
+			// Cycle through userId's followers, and add tweetId to Redis List
+
 			if (returnedKey != -1) {
 				// cycle through userId's followers, and add tweetId 
 				Jedis jedis = new Jedis("localhost");
 				Set<String> followerList = jedis.smembers(Integer.toString(userId));
 
 				for (String tempUserId : followerList) {
-					System.out.println("ListId is: " +  "follower" + tempUserId  + "and push value: "  
-				+ jedis.lpush(("l:" + tempUserId), Integer.toString(returnedKey)));
+					jedis.lpush(("l:" + tempUserId), Integer.toString(returnedKey));
 				}
 				jedis.close();
 			}
@@ -103,11 +105,9 @@ public class TweetDbUtil {
 
 				tweet = new Tweet(id, userId, message, 
 						imageUrl, time);
-				System.out.println(tweet.toString());
 
 			}
 			else {
-				System.out.println("Where is the User?");
 			}
 		} finally {
 			close(myConn, myStmt, myRs);
@@ -120,48 +120,43 @@ public class TweetDbUtil {
 	}
 	
 	public List<Tweet> getHomeFeed(int userId) throws Exception {
-		List<Tweet> tweets = new ArrayList<>();
+		List<Tweet> tweets = new ArrayList<Tweet>();
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
-		int MAXTWEETS = 10;
 		
 		// cycle through userId's followers, and add tweetId 
 		Jedis jedis = new Jedis("localhost");
-		Long listLen = jedis.llen("l:" + userId);
-		List<String> tweetIds = jedis.lrange(("l:" + userId), (-1* MAXTWEETS), -1);
+		List<String> tweetIds = jedis.lrange(("l:" + userId), (-1* Constants.TWEET_LIMIT), -1);
 		jedis.close();
-		System.out.println("LLEN SIZE: " + listLen);
-		System.out.println("Entering Try: " + listLen);
-		//tweetIds.size());
 
 		try {
 			// get a connection
 
-			System.out.println("INSIDE Try: " + listLen);
 			myConn = dataSource.getConnection();
-			String sql = "SELECT * FROM tweet WHERE ID IN (?";
-			System.out.println(" AGAIN: LLEN SIZE: " + listLen + sql);
+//			String sql = 
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * FROM tweet WHERE ID IN (?");
 			
-			if (tweetIds.size() == 0){
-				return null;
+			if (tweetIds.isEmpty()){
+				return Collections.emptyList();
 			}
 			
 			else {
 					
-				/* Create long sql statement */
+				/* Create Large statement */
 				int i = 0;
 				while( i <= tweetIds.size() - 2 ) {
-					sql += ",?";
+					// Linting Rule: squid:S1643)
+					sql.append(",?");
 					i++;  
 				}
-				sql += ") ";
+				sql.append(") ");
 				
 				
-				myStmt = myConn.prepareStatement(sql);
+				myStmt = myConn.prepareStatement(sql.toString());
 				
 				i = 1;
-				System.out.println("What is i: " + i);
 				for (String tId : tweetIds) {
 					myStmt.setInt(i, Integer.parseInt(tId));
 					i++;
@@ -174,7 +169,7 @@ public class TweetDbUtil {
 				i = 0;
 				while (myRs.next()) {
 
-					// retrive data from result set row
+					// Retrieve data from result set row
 					int id = myRs.getInt("id");
 					int tempUserId = myRs.getInt("userId");
 					String message = myRs.getString("message");

@@ -1,4 +1,4 @@
-package com.twitter.web.jdbc;
+package com.twitter.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
-import com.twitter.tweetsMVC.User;
-import com.twitter.tweetsMVC.UserDbUtil;
+import com.twitter.model.User;
+import com.twitter.util.UserDbUtil;
 /**
  * Servlet implementation class UserControllerServlet
  */
@@ -33,6 +33,7 @@ public class UserControllerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try { 
 			// read command parameter
@@ -68,10 +69,8 @@ public class UserControllerServlet extends HttpServlet {
 					break;
 
 				default: 
-					System.out.println("Failed Attempt at Login");
 					RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
 					dispatcher.forward(request, response);
-//					listUsers(request, response);
 			}
 		}
 		catch (Exception e) {
@@ -92,12 +91,7 @@ public class UserControllerServlet extends HttpServlet {
 			if (username != null) {
 				User user = userDbUtil.getSingleUserByUserName(username);
 
-				if (user != null) {
-
-					System.out.println("User Exists");
-					if (user.getPassword().equals(password)) {
-					System.out.println("User Found !");
-
+				if (user != null && (user.getPassword().equals(password))) { // User Exists and Found
 						HttpSession session = request.getSession();
 						session.setAttribute("userId", Integer.toString(user.getId()));
 						session.setAttribute("userName", user.getUserName());
@@ -105,32 +99,18 @@ public class UserControllerServlet extends HttpServlet {
 						session.setAttribute("imageUrl", user.getImageUrl());
 						session.setAttribute("userPageId", Integer.toString(user.getId()));
 						
-
 						RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
 						dispatcher.forward(request, response);
+						return;
 					}
-					else {
-						request.setAttribute("USER", null);
-						request.setAttribute("ERROR", true);
-						RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
-						dispatcher.forward(request, response);
-					}
-				}
-				else {
-					request.setAttribute("USER", null);
-					request.setAttribute("ERROR", true);
-					RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
-					dispatcher.forward(request, response);
-				}
-			}
-			else {
-				request.setAttribute("USER", null);
-				request.setAttribute("ERROR", true);
-				RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
-				dispatcher.forward(request, response);
 			}
 
-		
+			// If All Cases Fall Through
+			request.setAttribute("USER", null);
+			request.setAttribute("ERROR", true);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
+			dispatcher.forward(request, response);
+			return;
 	}
 
 	private void listSingleUser(HttpServletRequest request,

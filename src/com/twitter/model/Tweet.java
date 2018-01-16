@@ -1,4 +1,4 @@
-package com.twitter.tweetsMVC;
+package com.twitter.model;
 import java.sql.Timestamp;
 
 public class Tweet {

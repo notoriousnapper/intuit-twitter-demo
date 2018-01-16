@@ -1,4 +1,4 @@
-package com.twitter.web.jdbc;
+package com.twitter.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,10 +13,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import com.twitter.tweetsMVC.Tweet;
-import com.twitter.tweetsMVC.TweetDbUtil;
-import com.twitter.tweetsMVC.User;
-import com.twitter.tweetsMVC.UserDbUtil;
+import com.twitter.model.Tweet;
+import com.twitter.model.User;
+import com.twitter.util.TweetDbUtil;
+import com.twitter.util.UserDbUtil;
 
 /**
  * Servlet implementation class TweetControllerServlet
@@ -81,11 +81,9 @@ public class TweetControllerServlet extends HttpServlet {
 		throws Exception{
 		
 		List<Tweet> tweets = null;
-//		int[] userIdList = {1, 2, 3};
 		int userId = Integer.parseInt(request.getParameter("userId"));
 		tweets = tweetDbUtil.getHomeFeed(userId);
-		
-		
+
 		PrintWriter out = response.getWriter();
 		response.setContentType("text/plain");
 		out.print("<html><body> Tweets By User: \n");
@@ -118,17 +116,13 @@ public class TweetControllerServlet extends HttpServlet {
 //			out.print(tweet.getTimeStamp()); // will be incorrect
 			out.print("\n\n");
 		}
+
 		out.print("</body></html>");
 
-//		request.setAttribute("timeLine",  tweets);
-////		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-//		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-//		dispatcher.forward(request, response);
 		}
 
 	@Override
 	public void init() throws ServletException {
-		// TODO Auto-generated method stub
 		super.init();
 		// create our student db util, and pass in conn pool / datasource
 		
