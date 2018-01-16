@@ -53,7 +53,6 @@ public class Feed extends HttpServlet {
 		String[] token = pathInfo.split("/");
 		
 		if(token.length != 2) {
-			
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}

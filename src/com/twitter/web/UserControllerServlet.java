@@ -134,8 +134,8 @@ public class UserControllerServlet extends HttpServlet {
 		throws Exception{
 
 		String followerId = request.getParameter("follower");
-		String followeeId = request.getParameter("followee");
-		boolean isFollower = userDbUtil.checkFollower(followerId, followeeId);
+		String followingId = request.getParameter("followee");
+		boolean isFollower = userDbUtil.checkFollower(followerId, followingId);
 		
 		return isFollower;
 		
@@ -162,7 +162,6 @@ public class UserControllerServlet extends HttpServlet {
 
 		String followerId = request.getParameter("follower");
 		String followingId = request.getParameter("followee");
-		System.out.println("Followers and followee" + followerId + " " +  followingId);
 		
 		if (!checkFollower(request, response)){
 			userDbUtil.addFollower(followingId, followerId); // follower 2nd field
@@ -170,7 +169,6 @@ public class UserControllerServlet extends HttpServlet {
 		}
 		
 		String PageUserName = (String) request.getParameter("pageUserName");
-		System.err.println("Page USERNAME IS " + PageUserName);
 		if (PageUserName != null) {
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/timeline/" + PageUserName);
 			dispatcher.forward(request, response);
@@ -190,10 +188,9 @@ public class UserControllerServlet extends HttpServlet {
 		String followingId = request.getParameter("followee");
 		userDbUtil.removeFollower(followingId, followerId);
 		userDbUtil.removeFollowing(followingId, followerId);
-		System.out.println("Called Both Remove Functions");
+		System.out.println("Called Both Remove Functions from Redis and SQL");
 
 		String PageUserName = (String) request.getParameter("pageUserName");
-		System.err.println("Page USERNAME IS " + PageUserName);
 		if (PageUserName != null) {
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/timeline/" + PageUserName);
 			dispatcher.forward(request, response);

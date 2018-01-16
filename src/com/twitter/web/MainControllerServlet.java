@@ -68,17 +68,15 @@ public class MainControllerServlet extends HttpServlet {
 					session.setAttribute("pageUserHandle", user.getHandle());
 					session.setAttribute("pageUserImageUrl", user.getImageUrl());
 					session.setAttribute("pageUserPageId", Integer.toString(user.getId()));
-					System.out.println("Grabbed User: " + user.getUserName());
 					
 					List<Tweet> tweets = tweetDbUtil.getTweets(user.getId());
-					System.out.println("Timeline Tweets!" + tweets);
+					System.out.println("LOGGING: Timeline Tweets - " + tweets);
 					request.setAttribute("Timeline", tweets);
 
 					// Check if Following, return to page, current user is userId
 					String userId = (String) session.getAttribute("userId");
 					boolean isFollowing = false;
 					isFollowing = userDbUtil.checkFollower(userId,Integer.toString(user.getId()));
-					System.err.println("Following? " + isFollowing);
 					request.setAttribute("isFollowing", isFollowing);
 				}
 				

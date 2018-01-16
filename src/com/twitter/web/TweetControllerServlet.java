@@ -86,11 +86,9 @@ public class TweetControllerServlet extends HttpServlet {
 		
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		int userId = Integer.parseInt(request.getParameter("userId"));
-		System.out.println("About To Add HomeFeed");
 		try {
 			HttpSession session = request.getSession();
 				tweets = tweetDbUtil.getHomeFeed(userId);
-				System.out.println(userId + "Is user and Timeline Tweets!" + tweets);
 				request.setAttribute("Feed", tweets);
 		}
 		catch (Exception e) {
@@ -111,7 +109,6 @@ public class TweetControllerServlet extends HttpServlet {
 				
 		return;
 					
-//		return tweets;
 	}
 
 	private void listTimeLineTweets(HttpServletRequest request,
@@ -129,7 +126,6 @@ public class TweetControllerServlet extends HttpServlet {
 		for (Tweet tweet: tweets) {
 			out.print(tweet.getUserId());
 			out.print(tweet.getMessage());
-//			out.print(tweet.getTimeStamp()); // will be incorrect
 			out.print("\n\n");
 		}
 
@@ -140,8 +136,7 @@ public class TweetControllerServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		// create our student db util, and pass in conn pool / datasource
-		
+
 		try {
 			tweetDbUtil = new TweetDbUtil(dataSource);
 		}

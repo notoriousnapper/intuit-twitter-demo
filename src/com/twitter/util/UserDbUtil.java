@@ -51,11 +51,10 @@ public class UserDbUtil {
 
 				tempUser = new User(id, userName, password, email,
 						imageUrl, userHandle);
-				System.out.println(tempUser.toString());
 
 			}
 			else {
-				System.out.println("Where is the User?");
+				System.out.println("USER NOT FOUND.");
 			}
 		} finally {
 			close(myConn, myStmt, myRs);
@@ -87,9 +86,7 @@ public class UserDbUtil {
 			// process result set
 			if (myRs.next()) {
 				// retrieve data from result set row
-				System.out.println("Username 1.5 ");
 				int id = myRs.getInt("id");
-				System.out.println("Username 2 and id " + id);
 				String password = myRs.getString("password");
 				String email = myRs.getString("email");
 				String imageUrl = myRs.getString("imageUrl");
@@ -100,7 +97,7 @@ public class UserDbUtil {
 
 			}
 			else {
-				System.err.println("ERROR Getting user, does not exist.");
+				System.err.println("ERROR: USER DOES NOT EXIST.");
 			}
 		} finally {
 			close(myConn, myStmt, myRs);
@@ -121,6 +118,7 @@ public class UserDbUtil {
 		try {
 			// get a connection
 			myConn = dataSource.getConnection();
+
 			// create a sql statement
 			String sql = "select * from user";
 			myStmt = myConn.createStatement();
@@ -228,7 +226,6 @@ public class UserDbUtil {
 		// Step 2: Delete from Followee's list
 		// Step 3: Finally, Delete in user's own follower list
 	}
-
 	// TOTAL STEPS FOR A FOLLOW: 
 		// Steps 1: Add followee to follow list,  
 		// Steps 2: Update followee's follower list
@@ -236,7 +233,7 @@ public class UserDbUtil {
 
 	
 	
-	/* Following a Celebrity: Table of who you follow, you being a follower [Primary Key] */
+	/* Ex: Following a Celebrity: Table of who you follow, you are a follower a follower [Primary Key] */
 	public void followUser(String followingId, String followerId) throws Exception {
 
 		Connection myConn = null;
@@ -271,7 +268,7 @@ public class UserDbUtil {
 	}
 	
 	
-	// A Celebrity's [Following] # of followers grows
+	// A Celebrity [Who you are Following],  # of followers grows
 	public void addFollower(String followingId, String followerId) throws Exception {
 		Connection myConn = null;
 		PreparedStatement myStmt = null;

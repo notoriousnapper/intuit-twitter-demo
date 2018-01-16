@@ -4,11 +4,12 @@
 <%@attribute name="isFollowing" required="true" type="java.lang.Boolean"%> <!--  Main Input! -->
 <%@attribute name="pageUser" required="true" type="com.twitter.model.User"%> <!--  Main Input! -->
 <%@attribute name="disabled" required="false" type="java.lang.Boolean"%> <!--  Main Input! -->
+<%@attribute name="imageUrl" required="true" type="java.lang.String"%> <!--  Main Input! -->
 <link type="text/css" rel="stylesheet" href="<c:url value="/css/banner.css" />"/>
 
     <div class="banner">
       <div class="banner-top"></div>
-      <img class="profile-main" src="http://allthingsd.com/files/2012/06/brad_smith_intuit.png" alt="">
+      <img class="profile-main" src="${imageUrl}" alt="">
       <div class="banner-bottom">
 
         <div class="stats">
