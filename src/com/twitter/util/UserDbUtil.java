@@ -173,7 +173,53 @@ public class UserDbUtil {
 		return isFollower;
 	}
 
-	public void removeFollower(String followerId, String followeeId) throws Exception {
+	public void removeFollowing(String followingId, String followerId) throws Exception {
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		boolean isFollower = false;
+
+		try {
+			// get db connection
+			myConn = dataSource.getConnection();
+			String sql = "Delete from followee where followeeId = ? and userId = ? ";  
+			System.out.println("Removing Followee sql");
+			PreparedStatement ps = myConn.prepareStatement(sql);
+			ps.setString(1, followingId);
+			ps.setString(2, followerId);
+			ps.execute();
+
+		} finally {
+			close(myConn, myStmt, null);
+		}
+		return;
+		// Step 1: Delete from Redis Feed for given follower
+		// Step 2: Delete from Followee's list
+		// Step 3: Finally, Delete in user's own follower list
+	}
+	public void removeFollower(String followingId, String followerId) throws Exception {
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		boolean isFollower = false;
+
+		try {
+			// get db connection
+			myConn = dataSource.getConnection();
+			String sql = "Delete from follower where followerId = ? and userId = ? ";  
+			PreparedStatement ps = myConn.prepareStatement(sql);
+			ps.setString(1, followerId);
+			ps.setString(2, followingId);
+			ps.execute();
+			System.out.println("Removing Followee sql");
+			
+			// Redis Connection, remove follower from cached list of followers
+			Jedis jedis = new Jedis("localhost");
+			jedis.srem(followingId, followerId);
+			jedis.close();
+
+		} finally {
+			close(myConn, myStmt, null);
+		}
+		return;
 		// Step 1: Delete from Redis Feed for given follower
 		// Step 2: Delete from Followee's list
 		// Step 3: Finally, Delete in user's own follower list

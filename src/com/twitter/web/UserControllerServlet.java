@@ -176,8 +176,12 @@ public class UserControllerServlet extends HttpServlet {
 			HttpServletResponse response) throws Exception {
 
 		String followerId = request.getParameter("follower");
-		String followeeId = request.getParameter("followee");
-		userDbUtil.removeFollower(followerId, followeeId);
+		String followingId = request.getParameter("followee");
+		userDbUtil.removeFollower(followingId, followerId);
+		userDbUtil.removeFollowing(followingId, followerId);
+		System.out.println("Called Both Remove Functions");
+		
+		
 		
 	}
 
