@@ -128,15 +128,20 @@ public class TweetDbUtil {
 		
 		// cycle through userId's followers, and add tweetId 
 		Jedis jedis = new Jedis("localhost");
-		Long listLen = jedis.llen("l: " + userId);
+		Long listLen = jedis.llen("l:" + userId);
 		List<String> tweetIds = jedis.lrange(("l:" + userId), (-1* MAXTWEETS), -1);
 		jedis.close();
-		System.out.println("LLEN SIZE: " + tweetIds.size());
+		System.out.println("LLEN SIZE: " + listLen);
+		System.out.println("Entering Try: " + listLen);
+		//tweetIds.size());
 
 		try {
 			// get a connection
+
+			System.out.println("INSIDE Try: " + listLen);
 			myConn = dataSource.getConnection();
 			String sql = "SELECT * FROM tweet WHERE ID IN (?";
+			System.out.println(" AGAIN: LLEN SIZE: " + listLen + sql);
 			
 			if (tweetIds.size() == 0){
 				return null;
