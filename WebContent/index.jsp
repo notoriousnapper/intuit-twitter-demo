@@ -11,8 +11,8 @@
 	List<Tweet> tweets = (List<Tweet>) request.getAttribute("Timeline");
 
 	// Pre-Load Front-End Logic
-	User pageUser = PreLoad.preloadPageUserBySession(request.getSession(false));
-	User user = PreLoad.preloadUserBySession(request.getSession(false));
+	User pageUser = PreLoad.preloadPageUserBySession(session);
+	User user = PreLoad.preloadUserBySession(session);
 	request.setAttribute("user", user);
 	request.setAttribute("pageUser", pageUser);
 
