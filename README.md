@@ -1,5 +1,5 @@
 # ROUTES
-Below are accessible routes and what they return.
+**Accessible routes in the web application**
 
 _/api/feed/{user.id}_         - Returns up to top 100 Recent Tweets for
 													    - Selected user
@@ -19,7 +19,7 @@ _/feed.jsp_		    - If Logged In, will show Home Page,
 
 # DESIGN
 In designing a Twitter-like internal service, the emphasis
-was to be on Scalability & Speed:
+was on Scalability & Speed:
 
 **Scalability**
 	- With 10K users, and Intuit still growing quickly,
@@ -28,7 +28,7 @@ was to be on Scalability & Speed:
 	  REST services would allow for this
 	- Front-End Components are modularized and independent
 	- Back-End Database Access functions need to be decoupled
-	  for REST and Servlet Logic
+
 
 **Speed**
 	- Home Feed requires the largest amount of calculations,
@@ -58,10 +58,17 @@ was to be on Scalability & Speed:
 I. Persistent Data Storage was in MYSQL, In-Memory Cache with local Redis database.
 
 II. Future Improvements:
+- Improve Home Feed Algorithm
+	i. Have SQL Back-up of home feed
+	ii. Store Tweets in Redis Cache as JSON, including all necessary metadata
+
+III.
+- Other steps:
+	- Load imbalance and direct requests by user metadata(location)
+	- Storing Data in the cloud (Hadoop)
+
 - Create more REST resources
 - Decouple database-access and back-end logic to allow front-end to consume REST APIs
-
-- Store Tweets in Redis Cache as JSON, including all necessary metadata
 - Handle Exceptions
 - Log Data
 - Use Spring Framework
